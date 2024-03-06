@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '../interfaces/user';
 import { Artist } from '../interfaces/artist';
+import { Album } from '../interfaces/album';
 
 @Injectable()
 export class StoreService {
     private users: User[] = [];
     private artists: Artist[] = [];
+    private albums: Album[] = [];
 
     createUser(userData: User): User {
         this.users.push(userData);
@@ -60,6 +62,43 @@ export class StoreService {
 
         if (artistIndex !== -1) {
             this.artists.splice(artistIndex, 1);
+          return true;
+        }
+        return false;
+    }
+
+    setArtistReferencesToNull(artistId: string): void {
+        this.albums.forEach(album => {
+            if (album.artistId === artistId) {
+                album.artistId = null;
+            }
+        });
+    }
+
+    createAlbum(newAlbum: Album): Album {
+        this.albums.push(newAlbum);
+        return newAlbum;
+    }
+
+    getAllAlbums(): Album[] {
+        return this.albums;
+    }
+
+    getAlbumById(id: string): Album {
+        return this.albums.find(album => album.id === id);
+    }
+
+    updateAlbum(updatedAlbum: Album): Album {
+        const albumIndex = this.albums.findIndex(album => album.id === updatedAlbum.id);
+        this.albums[albumIndex] = updatedAlbum;
+        return updatedAlbum;
+    }
+
+    deleteAlbumById(id: string): Boolean {
+        const albumIndex = this.albums.findIndex(album => album.id === id);
+
+        if (albumIndex !== -1) {
+            this.albums.splice(albumIndex, 1);
           return true;
         }
         return false;

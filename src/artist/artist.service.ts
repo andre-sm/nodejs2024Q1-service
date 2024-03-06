@@ -38,12 +38,9 @@ export class ArtistService {
     const existingArtist = this.storeService.getArtistById(id);
   
     if (existingArtist) {
-        const { name, grammy } = updateArtistDto;
-
         const updatedArtist = {
             ...existingArtist,
-            name,
-            grammy,
+            ...updateArtistDto
         }
         return this.storeService.updateArtist(updatedArtist);
     }
@@ -55,6 +52,8 @@ export class ArtistService {
 
     if (!isDeleted) {
       throw new NotFoundException(ResponseMessages.ARTIST_NOT_FOUND);
+    } else {
+      this.storeService.setArtistReferencesToNull(id);
     }
   }
 }
