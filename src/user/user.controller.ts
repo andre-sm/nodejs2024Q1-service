@@ -1,36 +1,64 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Header } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UsePipes,
+  ParseUUIDPipe,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  HttpCode,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
+import { UserResponse } from './entities/user-response.entity';
 
 @Controller('user')
+@UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  @Header('Content-Type', 'application/json')
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  create(@Body() createUserDto: CreateUserDto): UserResponse {
+    const createdUser = this.userService.create(createUserDto);
+    return new UserResponse(createdUser);
   }
 
   @Get()
-  @Header('Content-Type', 'application/json')
-  findAll() {
-    return this.userService.findAll();
+  findAll(): UserResponse[] {
+    const allUsers = this.userService.findAll();
+    return allUsers.map(user => new UserResponse(user));
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(id);
+  @UsePipes(new ParseUUIDPipe({ version: '4' }))
+  findOne(@Param('id') id: string): UserResponse {
+    const requestedUser = this.userService.findOne(id);
+    return new UserResponse(requestedUser);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(id, updateUserDto);
+  @UsePipes(new ParseUUIDPipe({ version: '4' }))
+  update(
+    @Param('id') id: string,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+  ): UserResponse {
+    const updatedUser = this.userService.updateUserPassword(
+      id,
+      updatePasswordDto,
+    );
+
+    return new UserResponse(updatedUser);
   }
 
   @Delete(':id')
+  @HttpCode(204)
+  @UsePipes(new ParseUUIDPipe({ version: '4' }))
   remove(@Param('id') id: string) {
-    return this.userService.remove(id);
+    this.userService.remove(id);
   }
 }

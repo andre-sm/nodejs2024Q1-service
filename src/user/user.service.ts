@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { StoreService } from 'src/store/store.service';
-import { User } from 'src/interfaces/user';
+import { UpdatePasswordDto } from './dto/update-password.dto';
+import { StoreService } from '../store/store.service';
+import { User } from '../interfaces/user';
+import { ResponseMessages } from '../constants/response-messages';
 
 @Injectable()
 export class UserService {
@@ -29,15 +30,41 @@ export class UserService {
     return this.storeService.getAllUsers();
   }
 
-  findOne(id: string) {
-    return this.storeService.getUserById(id);
+  findOne(id: string): User {
+    const requestedUser = this.storeService.getUserById(id);
+    if (!requestedUser) {
+      throw new NotFoundException();
+    }
+    return requestedUser;
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  updateUserPassword(id: string, updatePasswordDto: UpdatePasswordDto): User {
+    const existingUser = this.storeService.getUserById(id);
+  
+    if (existingUser) {
+        const { oldPassword, newPassword } = updatePasswordDto;
+
+        if (oldPassword !== existingUser.password) {
+          throw new ForbiddenException(ResponseMessages.WRONG_PASSWORD);
+        }
+
+        const updatedUser = {
+            ...existingUser,
+            password: newPassword,
+            version: ++existingUser.version,
+            updatedAt: Date.now()
+        }
+        return this.storeService.updateUserPassword(updatedUser);
+    }
+    throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
   }
 
   remove(id: string) {
-    return `This action removes a #${id} user`;
+    const isDeleted = this.storeService.deleteUserById(id);
+
+    if (!isDeleted) {
+      throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
+    }
+
   }
 }
