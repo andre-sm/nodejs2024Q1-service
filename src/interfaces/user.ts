@@ -6,9 +6,3 @@ export interface User {
   createdAt: number;
   updatedAt: number;
 }
-
-export interface UserOperationResult {
-  isFailed: boolean; 
-  message: string;
-  data?: User;
-}

@@ -65,6 +65,5 @@ export class UserService {
     if (!isDeleted) {
       throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
     }
-
   }
 }
