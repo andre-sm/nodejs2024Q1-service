@@ -3,6 +3,7 @@ import { User } from '../interfaces/user';
 import { Artist } from '../interfaces/artist';
 import { Album } from '../interfaces/album';
 import { Track } from '../interfaces/track';
+import { Favorites, FavoritesResponse } from '../interfaces/favs';
 
 @Injectable()
 export class StoreService {
@@ -10,6 +11,11 @@ export class StoreService {
     private artists: Artist[] = [];
     private albums: Album[] = [];
     private tracks: Track[] = [];
+    private favorites: Favorites = {
+        artists: [],
+        albums: [],
+        tracks: [],
+    }
 
     createUser(userData: User): User {
         this.users.push(userData);
@@ -144,6 +150,64 @@ export class StoreService {
 
         if (trackIndex !== -1) {
             this.tracks.splice(trackIndex, 1);
+          return true;
+        }
+        return false;
+    }
+
+    getAllFavs(): FavoritesResponse {
+        return {
+            artists: this.artists.filter(artist => this.favorites.artists.includes(artist.id)),
+            albums: this.albums.filter(album => this.favorites.albums.includes(album.id)),
+            tracks: this.tracks.filter(track => this.favorites.tracks.includes(track.id)),
+        }
+    }
+
+    deleteFromFav(key: string, id: string) {
+        const entityIndex = this.favorites[key].findIndex(favId => favId === id);
+
+        if (entityIndex !== -1) {
+            this.favorites[key].splice(entityIndex, 1);
+        }
+    }
+
+    addTrackToFav(id: string) {
+        this.favorites.tracks.push(id);
+    }
+
+    deleteFavTrack(id: string) {
+        const trackIndex = this.favorites.tracks.findIndex(trackId => trackId === id);
+
+        if (trackIndex !== -1) {
+            this.favorites.tracks.splice(trackIndex, 1);
+          return true;
+        }
+        return false;
+    }
+
+    addAlbumToFav(id: string) {
+        this.favorites.albums.push(id);
+    }
+
+    deleteFavAlbum(id: string) {
+        const albumIndex = this.favorites.albums.findIndex(albumId => albumId === id);
+
+        if (albumIndex !== -1) {
+            this.favorites.albums.splice(albumIndex, 1);
+          return true;
+        }
+        return false;
+    }
+
+    addArtistToFav(id: string) {
+        this.favorites.artists.push(id);
+    }
+
+    deleteFavArtist(id: string) {
+        const artistIndex = this.favorites.artists.findIndex(artistId => artistId === id);
+
+        if (artistIndex !== -1) {
+            this.favorites.artists.splice(artistIndex, 1);
           return true;
         }
         return false;

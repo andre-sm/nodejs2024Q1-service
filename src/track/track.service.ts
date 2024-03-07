@@ -55,5 +55,7 @@ export class TrackService {
     if (!isDeleted) {
       throw new NotFoundException(ResponseMessages.TRACK_NOT_FOUND);
     }
+
+    this.storeService.deleteFromFav('tracks', id);
   }
 }
