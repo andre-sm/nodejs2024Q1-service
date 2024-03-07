@@ -3,4 +3,5 @@ export enum ResponseMessages {
     USER_NOT_FOUND = 'User Not Found',
     ARTIST_NOT_FOUND = 'Artist Not Found',
     ALBUM_NOT_FOUND = 'Album Not Found',
+    TRACK_NOT_FOUND = 'Track Not Found',
   }

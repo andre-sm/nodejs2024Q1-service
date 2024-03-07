@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { User } from '../interfaces/user';
 import { Artist } from '../interfaces/artist';
 import { Album } from '../interfaces/album';
+import { Track } from '../interfaces/track';
 
 @Injectable()
 export class StoreService {
     private users: User[] = [];
     private artists: Artist[] = [];
     private albums: Album[] = [];
+    private tracks: Track[] = [];
 
     createUser(userData: User): User {
         this.users.push(userData);
@@ -73,6 +75,12 @@ export class StoreService {
                 album.artistId = null;
             }
         });
+
+        this.tracks.forEach(track => {
+            if (track.artistId === artistId) {
+                track.artistId = null;
+            }
+        });
     }
 
     createAlbum(newAlbum: Album): Album {
@@ -99,6 +107,43 @@ export class StoreService {
 
         if (albumIndex !== -1) {
             this.albums.splice(albumIndex, 1);
+          return true;
+        }
+        return false;
+    }
+
+    setAlbumReferencesToNull(albumId: string): void {
+        this.tracks.forEach(track => {
+            if (track.albumId === albumId) {
+                track.albumId = null;
+            }
+        });
+    }
+
+    createTrack(newTrack: Track): Track {
+        this.tracks.push(newTrack);
+        return newTrack;
+    }
+
+    getAllTracks(): Track[] {
+        return this.tracks;
+    }
+
+    getTrackById(id: string): Track {
+        return this.tracks.find(track => track.id === id);
+    }
+
+    updateTrack(updatedTrack: Track): Track {
+        const trackIndex = this.tracks.findIndex(track => track.id === updatedTrack.id);
+        this.tracks[trackIndex] = updatedTrack;
+        return updatedTrack;
+    }
+
+    deleteTrackById(id: string): Boolean {
+        const trackIndex = this.tracks.findIndex(track => track.id === id);
+
+        if (trackIndex !== -1) {
+            this.tracks.splice(trackIndex, 1);
           return true;
         }
         return false;

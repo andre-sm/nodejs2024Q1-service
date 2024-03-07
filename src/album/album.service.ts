@@ -53,6 +53,8 @@ export class AlbumService {
 
     if (!isDeleted) {
       throw new NotFoundException(ResponseMessages.ALBUM_NOT_FOUND);
+    } else {
+      this.storeService.setAlbumReferencesToNull(id);
     }
   }
 }
