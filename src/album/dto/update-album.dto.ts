@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class UpdateAlbumDto {
     @IsOptional()
@@ -8,7 +8,7 @@ export class UpdateAlbumDto {
 
     @IsOptional()
     @IsNotEmpty()
-    @IsBoolean()
+    @IsNumber()
     year: number;
 
     @IsOptional()
