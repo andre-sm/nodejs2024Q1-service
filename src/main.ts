@@ -19,7 +19,7 @@ async function bootstrap() {
   const yamlContent = await readFile(yamlFilePath, 'utf8');
   const swaggerDocument = yaml.load(yamlContent) as OpenAPIObject;
 
-  SwaggerModule.setup('api', app, swaggerDocument);
+  SwaggerModule.setup('doc', app, swaggerDocument);
 
   await app.listen(PORT);
 }
