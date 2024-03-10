@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
@@ -20,7 +24,7 @@ export class UserService {
       id: uuidv4(),
       version: 1,
       createdAt: timestamp,
-      updatedAt: timestamp
+      updatedAt: timestamp,
     };
 
     return this.storeService.createUser(newUserData);
@@ -40,21 +44,21 @@ export class UserService {
 
   updateUserPassword(id: string, updatePasswordDto: UpdatePasswordDto): User {
     const existingUser = this.storeService.getUserById(id);
-  
+
     if (existingUser) {
-        const { oldPassword, newPassword } = updatePasswordDto;
+      const { oldPassword, newPassword } = updatePasswordDto;
 
-        if (oldPassword !== existingUser.password) {
-          throw new ForbiddenException(ResponseMessages.WRONG_PASSWORD);
-        }
+      if (oldPassword !== existingUser.password) {
+        throw new ForbiddenException(ResponseMessages.WRONG_PASSWORD);
+      }
 
-        const updatedUser = {
-            ...existingUser,
-            password: newPassword,
-            version: ++existingUser.version,
-            updatedAt: Date.now()
-        }
-        return this.storeService.updateUserPassword(updatedUser);
+      const updatedUser = {
+        ...existingUser,
+        password: newPassword,
+        version: ++existingUser.version,
+        updatedAt: Date.now(),
+      };
+      return this.storeService.updateUserPassword(updatedUser);
     }
     throw new NotFoundException(ResponseMessages.USER_NOT_FOUND);
   }

@@ -1,8 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { SwaggerModule, OpenAPIObject } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import * as dotenv from 'dotenv';
+import { join } from 'path';
+import * as yaml from 'js-yaml';
+import { readFile } from 'fs/promises';
 
 dotenv.config();
 const PORT = process.env.PORT || 4000;
@@ -12,15 +15,11 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
 
-  const config = new DocumentBuilder()
-    .setTitle('REST Service')
-    .setDescription('REST Service')
-    .setVersion('1.0')
-    .addTag('rest')
-    .build();
+  const yamlFilePath = join(__dirname, '..', 'doc', 'api.yaml');
+  const yamlContent = await readFile(yamlFilePath, 'utf8');
+  const swaggerDocument = yaml.load(yamlContent) as OpenAPIObject;
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, swaggerDocument);
 
   await app.listen(PORT);
 }

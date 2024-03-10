@@ -6,6 +6,6 @@ import { StoreModule } from '../store/store.module';
 @Module({
   controllers: [AlbumController],
   providers: [AlbumService],
-  imports: [StoreModule]
+  imports: [StoreModule],
 })
 export class AlbumModule {}

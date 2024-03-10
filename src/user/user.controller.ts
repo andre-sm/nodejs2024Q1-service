@@ -30,7 +30,7 @@ export class UserController {
   @Get()
   findAll(): UserResponse[] {
     const allUsers = this.userService.findAll();
-    return allUsers.map(user => new UserResponse(user));
+    return allUsers.map((user) => new UserResponse(user));
   }
 
   @Get(':id')

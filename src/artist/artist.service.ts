@@ -16,7 +16,7 @@ export class ArtistService {
     const newArtist = {
       id: uuidv4(),
       name,
-      grammy
+      grammy,
     };
 
     return this.storeService.createArtist(newArtist);
@@ -36,13 +36,13 @@ export class ArtistService {
 
   update(id: string, updateArtistDto: UpdateArtistDto) {
     const existingArtist = this.storeService.getArtistById(id);
-  
+
     if (existingArtist) {
-        const updatedArtist = {
-            ...existingArtist,
-            ...updateArtistDto
-        }
-        return this.storeService.updateArtist(updatedArtist);
+      const updatedArtist = {
+        ...existingArtist,
+        ...updateArtistDto,
+      };
+      return this.storeService.updateArtist(updatedArtist);
     }
     throw new NotFoundException(ResponseMessages.ARTIST_NOT_FOUND);
   }
@@ -53,7 +53,7 @@ export class ArtistService {
     if (!isDeleted) {
       throw new NotFoundException(ResponseMessages.ARTIST_NOT_FOUND);
     }
-    
+
     this.storeService.setArtistReferencesToNull(id);
     this.storeService.deleteFromFav('artists', id);
   }

@@ -6,6 +6,6 @@ import { StoreModule } from '../store/store.module';
 @Module({
   controllers: [ArtistController],
   providers: [ArtistService],
-  imports: [StoreModule]
+  imports: [StoreModule],
 })
 export class ArtistModule {}

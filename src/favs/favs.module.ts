@@ -6,6 +6,6 @@ import { StoreModule } from '../store/store.module';
 @Module({
   controllers: [FavsController],
   providers: [FavsService],
-  imports: [StoreModule]
+  imports: [StoreModule],
 })
 export class FavsModule {}

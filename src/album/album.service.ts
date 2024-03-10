@@ -17,7 +17,7 @@ export class AlbumService {
       id: uuidv4(),
       name,
       year,
-      artistId: artistId || null
+      artistId: artistId || null,
     };
 
     return this.storeService.createAlbum(newAlbum);
@@ -37,13 +37,13 @@ export class AlbumService {
 
   update(id: string, updateAlbumDto: UpdateAlbumDto): Album {
     const existingAlbum = this.storeService.getAlbumById(id);
-  
+
     if (existingAlbum) {
-        const updatedAlbum = {
-            ...existingAlbum,
-            ...updateAlbumDto,
-        }
-        return this.storeService.updateAlbum(updatedAlbum);
+      const updatedAlbum = {
+        ...existingAlbum,
+        ...updateAlbumDto,
+      };
+      return this.storeService.updateAlbum(updatedAlbum);
     }
     throw new NotFoundException(ResponseMessages.ALBUM_NOT_FOUND);
   }
@@ -53,8 +53,8 @@ export class AlbumService {
 
     if (!isDeleted) {
       throw new NotFoundException(ResponseMessages.ALBUM_NOT_FOUND);
-    } 
-    
+    }
+
     this.storeService.setAlbumReferencesToNull(id);
     this.storeService.deleteFromFav('albums', id);
   }

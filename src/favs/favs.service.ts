@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { StoreService } from '../store/store.service';
 import { FavoritesResponse } from '../interfaces/favs';
 import { ResponseMessages } from 'src/constants/response-messages';
@@ -27,7 +31,7 @@ export class FavsService {
       throw new NotFoundException(ResponseMessages.FAV_TRACK_NOT_FOUND);
     }
   }
-  
+
   addAlbumToFav(id: string) {
     const albumToAdd = this.storeService.getAlbumById(id);
     if (!albumToAdd) {

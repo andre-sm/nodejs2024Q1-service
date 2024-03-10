@@ -18,7 +18,7 @@ export class TrackService {
       name,
       artistId: artistId || null,
       albumId: albumId || null,
-      duration
+      duration,
     };
 
     return this.storeService.createTrack(newTrack);
@@ -38,13 +38,13 @@ export class TrackService {
 
   update(id: string, updateTrackDto: UpdateTrackDto): Track {
     const existingTrack = this.storeService.getTrackById(id);
-  
+
     if (existingTrack) {
-        const updatedTrack = {
-            ...existingTrack,
-            ...updateTrackDto,
-        }
-        return this.storeService.updateTrack(updatedTrack);
+      const updatedTrack = {
+        ...existingTrack,
+        ...updateTrackDto,
+      };
+      return this.storeService.updateTrack(updatedTrack);
     }
     throw new NotFoundException(ResponseMessages.TRACK_NOT_FOUND);
   }
