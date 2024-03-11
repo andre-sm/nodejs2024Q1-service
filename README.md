@@ -1,61 +1,41 @@
 # Home Library Service
 
-## Prerequisites
+### Installation
 
-- Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
-
-## Downloading
-
+#### 1. Clone repository
 ```
-git clone {repository URL}
+https://github.com/andre-sm/nodejs2024Q1-service.git
 ```
-
-## Installing NPM modules
-
+####  2. Go to the project directory
+```
+cd nodejs2024Q1-service
+```
+####  3. Switch to `dev` branch
+```
+git checkout dev
+```
+####  4. Install dependencies
 ```
 npm install
 ```
+####  5. Rename .env.example file to .env and modify PORT if needed
+####  6. Run the server
+```
+# development mode
+npm run start:dev
 
-## Running application
+# production mode
+npm run start
 
 ```
-npm start
-```
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
-
-## Testing
-
-After application running open new terminal and enter:
-
-To run all tests without authorization
-
+####  7. Run the tests
 ```
 npm run test
-```
-
-To run only one of all test suites
 
 ```
-npm run test -- <path to suite>
-```
 
-To run all test with authorization
-
-```
-npm run test:auth
-```
-
-To run only specific test suite with authorization
-
-```
-npm run test:auth -- <path to suite>
-```
-
-### Auto-fix and format
+#### 8. Auto-fix and format
 
 ```
 npm run lint
@@ -65,8 +45,47 @@ npm run lint
 npm run format
 ```
 
-### Debugging in VSCode
+### Notes
 
-Press <kbd>F5</kbd> to debug.
+- After starting the app on port (4000 as default) you can open
+in your browser OpenAPI documentation by typing http://localhost:4000/doc/
+- For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+### API Endpoints
+
+| Method    | Endpoint             | Description                  |
+|-----------|----------------------|------------------------------|
+| 			|	  User endpoint    |                              |
+| `GET`     | `/user`              | Get all users                |
+| `GET`     | `/user/:id`          | Get user by id               |
+| `POST`    | `/user`              | Create new user              |
+| `PUT`     | `/user/:id`          | Update user's password       |
+| `DELETE`  | `/user/:id`          | Delete user                  |
+| 			|	 Track endpoint    |                              |
+| `GET`     | `/track`             | Get all tracks               |
+| `GET`     | `/track/:id`         | Get track by id              |
+| `POST`    | `/track`             | Create new track             |
+| `PUT`     | `/track/:id`         | Update track info            |
+| `DELETE`  | `/track/:id`         | Delete track                 |
+| 			|	 Artist endpoint   |                              |
+| `GET`     | `/artist`            | Get all artists              |
+| `GET`     | `/artist/:id`        | Get artist by id             |
+| `POST`    | `/artist`            | Create new artist            |
+| `PUT`     | `/artist/:id`        | Update artist info           |
+| `DELETE`  | `/artist/:id`        | Delete artist                |
+| 			|	 Album endpoint    |                              |
+| `GET`     | `/album`             | Get all albums               |
+| `GET`     | `/album/:id`         | Get album by id              |
+| `POST`    | `/album`             | Create new albums            |
+| `PUT`     | `/album/:id`         | Update album info            |
+| `DELETE`  | `/album/:id`         | Delete album                 |
+| 			|	 Favs endpoint     |                              |
+| `GET`     | `/favs`              | Get all favorites            |
+| `POST`    | `/favs/track/:id`    | Add track to the favorites   |
+| `DELETE`  | `/favs/track/:id`    | Delete track from favorites  |
+| `POST`    | `/favs/album/:id`    | Add album to the favorites   |
+| `DELETE`  | `/favs/album/:id`    | Delete album from favorites  |
+| `POST`    | `/favs/artist/:id`   | Add artist to the favorites  |
+| `DELETE`  | `/favs/artist/:id`   | Delete artist from favorites |
+
+
