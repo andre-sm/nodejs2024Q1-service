@@ -1,7 +1,7 @@
 FROM node:lts-alpine3.19
-WORKDIR /usr/app
+WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 COPY . .
-EXPOSE 4000
+EXPOSE ${PORT}
 CMD ["npm", "run", "start:dev"]
