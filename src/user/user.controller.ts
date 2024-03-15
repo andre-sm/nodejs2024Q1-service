@@ -22,29 +22,31 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto): UserResponse {
-    const createdUser = this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto): Promise<UserResponse> {
+    const createdUser = await this.userService.create(createUserDto);
     return new UserResponse(createdUser);
   }
 
   @Get()
-  findAll(): UserResponse[] {
-    const allUsers = this.userService.findAll();
+  async findAll(): Promise<UserResponse[]> {
+    const allUsers = await this.userService.findAll();
     return allUsers.map((user) => new UserResponse(user));
   }
 
   @Get(':id')
-  findOne(@Param('id', new ParseUUIDPipe()) id: string): UserResponse {
-    const requestedUser = this.userService.findOne(id);
+  async findOne(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<UserResponse> {
+    const requestedUser = await this.userService.findOne(id);
     return new UserResponse(requestedUser);
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
-  ): UserResponse {
-    const updatedUser = this.userService.updateUserPassword(
+  ): Promise<UserResponse> {
+    const updatedUser = await this.userService.updateUserPassword(
       id,
       updatePasswordDto,
     );
@@ -54,7 +56,7 @@ export class UserController {
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
-    this.userService.remove(id);
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    await this.userService.remove(id);
   }
 }
