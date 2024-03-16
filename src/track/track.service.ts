@@ -1,61 +1,67 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
-import { StoreService } from '../store/store.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from '../interfaces/track';
 import { ResponseMessages } from 'src/constants/response-messages';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class TrackService {
-  constructor(private readonly storeService: StoreService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
-  create(createTrackDto: CreateTrackDto): Track {
+  async create(createTrackDto: CreateTrackDto): Promise<Track> {
     const { name, artistId, albumId, duration } = createTrackDto;
 
-    const newTrack = {
-      id: uuidv4(),
-      name,
-      artistId: artistId || null,
-      albumId: albumId || null,
-      duration,
-    };
-
-    return this.storeService.createTrack(newTrack);
+    return await this.prismaService.track.create({
+      data: {
+        name,
+        artistId: artistId || null,
+        albumId: albumId || null,
+        duration,
+      },
+    });
   }
 
-  findAll(): Track[] {
-    return this.storeService.getAllTracks();
+  async findAll(): Promise<Track[]> {
+    return await this.prismaService.track.findMany();
   }
 
-  findOne(id: string): Track {
-    const requestedTrack = this.storeService.getTrackById(id);
+  async findOne(id: string): Promise<Track> {
+    const requestedTrack = await this.prismaService.track.findUnique({
+      where: { id },
+    });
+
     if (!requestedTrack) {
       throw new NotFoundException();
     }
     return requestedTrack;
   }
 
-  update(id: string, updateTrackDto: UpdateTrackDto): Track {
-    const existingTrack = this.storeService.getTrackById(id);
+  async update(id: string, updateTrackDto: UpdateTrackDto): Promise<Track> {
+    const existingTrack = await this.prismaService.track.findUnique({
+      where: { id },
+    });
 
     if (existingTrack) {
-      const updatedTrack = {
-        ...existingTrack,
-        ...updateTrackDto,
-      };
-      return this.storeService.updateTrack(updatedTrack);
+      return await this.prismaService.track.update({
+        where: { id },
+        data: {
+          ...updateTrackDto,
+        },
+      });
     }
     throw new NotFoundException(ResponseMessages.TRACK_NOT_FOUND);
   }
 
-  remove(id: string) {
-    const isDeleted = this.storeService.deleteTrackById(id);
-
-    if (!isDeleted) {
+  async remove(id: string) {
+    try {
+      await this.prismaService.track.delete({
+        where: { id },
+      });
+    } catch (error) {
       throw new NotFoundException(ResponseMessages.TRACK_NOT_FOUND);
     }
 
-    this.storeService.deleteFromFav('tracks', id);
+    // this.storeService.deleteFromFav('tracks', id);
   }
 }
