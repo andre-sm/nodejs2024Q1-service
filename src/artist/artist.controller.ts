@@ -19,22 +19,22 @@ export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 
   @Post()
-  create(@Body() createArtistDto: CreateArtistDto): Artist {
-    return this.artistService.create(createArtistDto);
+  async create(@Body() createArtistDto: CreateArtistDto): Promise<Artist> {
+    return await this.artistService.create(createArtistDto);
   }
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.artistService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.artistService.findOne(id);
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
@@ -43,7 +43,7 @@ export class ArtistController {
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.artistService.remove(id);
   }
 }
