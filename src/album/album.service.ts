@@ -1,61 +1,67 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
-import { StoreService } from '../store/store.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from '../interfaces/album';
 import { ResponseMessages } from 'src/constants/response-messages';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AlbumService {
-  constructor(private readonly storeService: StoreService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
-  create(createAlbumDto: CreateAlbumDto): Album {
+  async create(createAlbumDto: CreateAlbumDto): Promise<Album> {
     const { name, year, artistId } = createAlbumDto;
 
-    const newAlbum = {
-      id: uuidv4(),
-      name,
-      year,
-      artistId: artistId || null,
-    };
-
-    return this.storeService.createAlbum(newAlbum);
+    return await this.prismaService.album.create({
+      data: {
+        name,
+        year,
+        artistId: artistId || null,
+      },
+    });
   }
 
-  findAll(): Album[] {
-    return this.storeService.getAllAlbums();
+  async findAll(): Promise<Album[]> {
+    return await this.prismaService.album.findMany();
   }
 
-  findOne(id: string): Album {
-    const requestedAlbum = this.storeService.getAlbumById(id);
+  async findOne(id: string): Promise<Album> {
+    const requestedAlbum = await this.prismaService.album.findUnique({
+      where: { id },
+    });
+
     if (!requestedAlbum) {
       throw new NotFoundException();
     }
     return requestedAlbum;
   }
 
-  update(id: string, updateAlbumDto: UpdateAlbumDto): Album {
-    const existingAlbum = this.storeService.getAlbumById(id);
+  async update(id: string, updateAlbumDto: UpdateAlbumDto): Promise<Album> {
+    const existingAlbum = await this.prismaService.album.findUnique({
+      where: { id },
+    });
 
     if (existingAlbum) {
-      const updatedAlbum = {
-        ...existingAlbum,
-        ...updateAlbumDto,
-      };
-      return this.storeService.updateAlbum(updatedAlbum);
+      return await this.prismaService.album.update({
+        where: { id },
+        data: {
+          ...updateAlbumDto,
+        },
+      });
     }
     throw new NotFoundException(ResponseMessages.ALBUM_NOT_FOUND);
   }
 
-  remove(id: string) {
-    const isDeleted = this.storeService.deleteAlbumById(id);
-
-    if (!isDeleted) {
+  async remove(id: string) {
+    try {
+      await this.prismaService.album.delete({
+        where: { id },
+      });
+    } catch (error) {
       throw new NotFoundException(ResponseMessages.ALBUM_NOT_FOUND);
     }
 
-    this.storeService.setAlbumReferencesToNull(id);
-    this.storeService.deleteFromFav('albums', id);
+    // this.storeService.setAlbumReferencesToNull(id);
+    // this.storeService.deleteFromFav('albums', id);
   }
 }
