@@ -60,8 +60,5 @@ export class AlbumService {
     } catch (error) {
       throw new NotFoundException(ResponseMessages.ALBUM_NOT_FOUND);
     }
-
-    // this.storeService.setAlbumReferencesToNull(id);
-    // this.storeService.deleteFromFav('albums', id);
   }
 }

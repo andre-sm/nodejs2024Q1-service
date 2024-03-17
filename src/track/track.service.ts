@@ -61,7 +61,5 @@ export class TrackService {
     } catch (error) {
       throw new NotFoundException(ResponseMessages.TRACK_NOT_FOUND);
     }
-
-    // this.storeService.deleteFromFav('tracks', id);
   }
 }

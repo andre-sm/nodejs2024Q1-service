@@ -3,65 +3,128 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { StoreService } from '../store/store.service';
-import { FavoritesResponse } from '../interfaces/favs';
+import { FavoritesResponse, FavoriteEntity } from '../interfaces/favs';
 import { ResponseMessages } from 'src/constants/response-messages';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class FavsService {
-  constructor(private readonly storeService: StoreService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
-  findAll(): FavoritesResponse {
-    return this.storeService.getAllFavs();
+  async findAll(): Promise<FavoritesResponse> {
+    const favoritesRequests = [
+      this.prismaService.favoriteArtist.findMany({
+        include: {
+          artist: true,
+        },
+      }),
+      this.prismaService.favoriteAlbum.findMany({
+        include: {
+          album: true,
+        },
+      }),
+      this.prismaService.favoriteTrack.findMany({
+        include: {
+          track: true,
+        },
+      }),
+    ];
+
+    const favorites = await Promise.all(favoritesRequests);
+
+    return {
+      artists: favorites[0].map(
+        (favoriteArtist: FavoriteEntity) => favoriteArtist.artist,
+      ),
+      albums: favorites[1].map(
+        (favoriteAlbum: FavoriteEntity) => favoriteAlbum.album,
+      ),
+      tracks: favorites[2].map(
+        (favoriteTrack: FavoriteEntity) => favoriteTrack.track,
+      ),
+    };
   }
 
-  addTrackToFav(id: string) {
-    const trackToAdd = this.storeService.getTrackById(id);
+  async addTrackToFav(id: string) {
+    const trackToAdd = await this.prismaService.track.findUnique({
+      where: { id },
+    });
+
     if (!trackToAdd) {
       throw new UnprocessableEntityException();
     }
 
-    return this.storeService.addTrackToFav(id);
+    return await this.prismaService.favoriteTrack.create({
+      data: {
+        trackId: id,
+      },
+    });
   }
 
-  removeFavTrack(id: string) {
-    const isDeleted = this.storeService.deleteFavTrack(id);
-
-    if (!isDeleted) {
+  async removeFavTrack(id: string) {
+    try {
+      await this.prismaService.favoriteTrack.delete({
+        where: {
+          trackId: id,
+        },
+      });
+    } catch (error) {
       throw new NotFoundException(ResponseMessages.FAV_TRACK_NOT_FOUND);
     }
   }
 
-  addAlbumToFav(id: string) {
-    const albumToAdd = this.storeService.getAlbumById(id);
+  async addAlbumToFav(id: string) {
+    const albumToAdd = await this.prismaService.album.findUnique({
+      where: { id },
+    });
+
     if (!albumToAdd) {
       throw new UnprocessableEntityException();
     }
 
-    return this.storeService.addAlbumToFav(id);
+    return await this.prismaService.favoriteAlbum.create({
+      data: {
+        albumId: id,
+      },
+    });
   }
 
-  removeFavAlbum(id: string) {
-    const isDeleted = this.storeService.deleteFavAlbum(id);
-
-    if (!isDeleted) {
+  async removeFavAlbum(id: string) {
+    try {
+      await this.prismaService.favoriteAlbum.delete({
+        where: {
+          albumId: id,
+        },
+      });
+    } catch (error) {
       throw new NotFoundException(ResponseMessages.FAV_ALBUM_NOT_FOUND);
     }
   }
 
-  addArtistToFav(id: string) {
-    const artistToAdd = this.storeService.getArtistById(id);
+  async addArtistToFav(id: string) {
+    const artistToAdd = await this.prismaService.artist.findUnique({
+      where: { id },
+    });
+
     if (!artistToAdd) {
       throw new UnprocessableEntityException();
     }
 
-    return this.storeService.addArtistToFav(id);
+    return await this.prismaService.favoriteArtist.create({
+      data: {
+        artistId: id,
+      },
+    });
   }
 
-  removeFavArtist(id: string) {
-    const isDeleted = this.storeService.deleteFavArtist(id);
-
-    if (!isDeleted) {
+  async removeFavArtist(id: string) {
+    try {
+      await this.prismaService.favoriteArtist.delete({
+        where: {
+          artistId: id,
+        },
+      });
+    } catch (error) {
       throw new NotFoundException(ResponseMessages.FAV_ARTIST_NOT_FOUND);
     }
   }

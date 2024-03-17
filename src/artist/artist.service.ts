@@ -60,8 +60,5 @@ export class ArtistService {
     } catch (error) {
       throw new NotFoundException(ResponseMessages.ARTIST_NOT_FOUND);
     }
-
-    // this.storeService.setArtistReferencesToNull(id);
-    // this.storeService.deleteFromFav('artists', id);
   }
 }

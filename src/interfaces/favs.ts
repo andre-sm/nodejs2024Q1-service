@@ -13,3 +13,13 @@ export interface FavoritesResponse {
   albums: Album[];
   tracks: Track[];
 }
+
+export interface FavoriteEntity {
+  id: string;
+  artistId?: string;
+  artist?: Artist;
+  albumId?: string;
+  album?: Album;
+  trackId?: string;
+  track?: Track;
+}
