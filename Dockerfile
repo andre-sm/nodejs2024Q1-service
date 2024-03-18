@@ -4,3 +4,4 @@ COPY package*.json ./
 RUN npm ci && npm cache clean --force
 COPY . .
 EXPOSE ${PORT}
+CMD ["npm", "run", "start:dev"]

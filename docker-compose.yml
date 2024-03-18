@@ -17,7 +17,6 @@ services:
     restart: always
     networks:
       - app-net
-    command: npm run start:dev
 
   postgres-db:
     container_name: postgres
@@ -33,12 +32,15 @@ services:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     volumes:
       - postgres:/var/lib/postgresql/data
+      - logs:/logs
+    command: postgres -c logging_collector=on -c log_destination=stderr -c log_directory=/logs
     restart: always
     networks:
       - app-net
 
 volumes:
   postgres:
+  logs:
 
 networks:
   app-net:
