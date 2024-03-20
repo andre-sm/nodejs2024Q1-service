@@ -13,6 +13,8 @@ services:
       - ${PORT}:${PORT}
     volumes:
       - .:/app
+      - modules:/app/node_modules
+    command: ["/bin/sh", "-c", "npm run migration:start"]
     depends_on:
       - postgres-db
     restart: always
@@ -43,6 +45,7 @@ services:
 volumes:
   postgres:
   logs:
+  modules:
 
 networks:
   app-net:
