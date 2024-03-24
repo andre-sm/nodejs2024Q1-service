@@ -10,33 +10,31 @@ https://github.com/andre-sm/nodejs2024Q1-service.git
 ```
 cd nodejs2024Q1-service
 ```
-####  3. Switch to `dev` branch
+####  3. Switch to `dev-part-2` branch
 ```
-git checkout dev
+git checkout dev-part-2
 ```
 ####  4. Install dependencies
 ```
 npm install
 ```
-####  5. Rename .env.example file to .env and modify PORT if needed
-####  6. Run the server
+####  5. Rename .env.example file to .env
+####  6. Create and start containers
 ```
-# development mode
-npm run start:dev
-
-# production mode
-npm run start
-
+docker-compose up
 ```
 
 ####  7. Run the tests
 ```
 npm run test
-
 ```
 
-#### 8. Auto-fix and format
+####  8. Scan docker images for vulnerabilities
+```
+npm run docker:scan
+```
 
+#### 9. Auto-fix and format
 ```
 npm run lint
 ```
@@ -49,7 +47,7 @@ npm run format
 
 - After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/
-- For more information about OpenAPI/Swagger please visit https://swagger.io/.
+- For more information about OpenAPI/Swagger please visit https://swagger.io/
 
 ### API Endpoints
 
