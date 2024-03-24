@@ -1,0 +1,52 @@
+version: '3.8'
+services:
+  nest:
+    container_name: nest
+    image: nest-server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - PORT=${PORT}
+      - DATABASE_URL=${DATABASE_URL}
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - .:/app
+      - modules:/app/node_modules
+    command: ["/bin/sh", "-c", "npm run migration:start"]
+    depends_on:
+      - postgres-db
+    restart: always
+    networks:
+      - app-net
+
+  postgres-db:
+    container_name: postgres
+    image: postgres-db
+    build:
+      context: .
+      dockerfile: ./db/Dockerfile
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - DATABASE_URL=${DATABASE_URL}
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - logs:/logs
+    command: postgres -c logging_collector=on -c log_destination=stderr -c log_directory=/logs
+    restart: always
+    networks:
+      - app-net
+
+volumes:
+  postgres:
+  logs:
+  modules:
+
+networks:
+  app-net:
+    driver: bridge
